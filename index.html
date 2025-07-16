@@ -136,7 +136,11 @@
       opacity: 1;
       box-shadow: 0 0 15px #0f0;
     }
+    .final-buttons a.btn-guide {
+      background-color: #06c !important;
+    }
     .final-buttons a:hover { transform: scale(1.03); }
+
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
@@ -144,6 +148,49 @@
     @keyframes fadeInDown {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    #popupOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(6px);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    #popupOverlay iframe {
+      width: 100%;
+      height: 450px;
+      border-radius: 12px;
+      border: none;
+      display: none;
+    }
+    #popupOverlay .close-btn {
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      font-size: 22px;
+      color: white;
+      cursor: pointer;
+    }
+    #popupOverlay .popup-box {
+      position: relative;
+      background: #111;
+      padding: 30px 20px;
+      width: 95%;
+      max-width: 800px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px #0ff;
+      text-align: center;
+    }
+    #popupMessage {
+      font-size: 18px;
+      color: cyan;
+      margin-bottom: 15px;
+      text-shadow: 0 0 5px #0ff;
     }
   </style>
 </head>
@@ -180,22 +227,20 @@
   <div id="finalMessage" class="final-message">❌ نفّذ الخطوات أولاً لكي يتم فتح روابط التحميل</div>
   <div class="final-buttons">
     <a id="btnDownload" href="#" onclick="goToDownload(); return false;">🔒 اضغط هنا لتحميل اقوي هكر فري فاير اخر اصدار</a>
-    <a id="btnGuide" href="#" onclick="showVideo(); return false;" style="background-color:#06c;">📹 اضغط هنا لمعرفة طريقة تحميل فري فاير المهكرة</a>
   </div>
-  <div id="videoContainer" style="display:none; margin-top:20px;">
-    <video id="guideVideo" width="100%" controls style="max-width:500px; border:2px solid #0ff; border-radius:12px; box-shadow:0 0 10px #0ff;">
-      <source src="https://drive.google.com/uc?export=download&id=1nZBEjoxp2nCjzpqVQI3QexFnPs0-jJ6C" type="video/mp4">
-      متصفحك لا يدعم تشغيل الفيديو.
-    </video>
+</div>
+
+<div id="popupOverlay">
+  <div class="popup-box">
+    <span class="close-btn" onclick="closePopup()">❌</span>
+    <div id="popupMessage">⏳ انتظر لحظة… يتم فتح الفيديو</div>
+    <iframe id="youtubeFrame" allow="autoplay; encrypted-media" allowfullscreen></iframe>
   </div>
 </div>
 
 <script>
-  const STEP_EXPIRY_MS = 365 * 24 * 60 * 60 * 1000; // سنة
-  const step3Links = [
-    "https://www.youtube.com/watch?v=D0wvL4eu2_w"
-  ];
-
+  const STEP_EXPIRY_MS = 365 * 24 * 60 * 60 * 1000;
+  const step3Links = ["https://www.youtube.com/watch?v=D0wvL4eu2_w"];
   const step3StorageKey = "step3States_v8782_page45456";
   const stepsStateKey = "stepsState";
 
@@ -275,7 +320,20 @@
       document.getElementById("finalMessage").innerText = "✅ تم تنفيذ كل الخطوات بنجاح";
       document.getElementById("finalMessage").style.color = "lime";
       document.getElementById("btnDownload").classList.add("active");
-      document.getElementById("btnGuide").classList.add("active");
+
+      // إضافة زر الدليل عند إتمام الخطوات
+      if (!document.getElementById("btnGuide")) {
+        const guideBtn = document.createElement("a");
+        guideBtn.id = "btnGuide";
+        guideBtn.href = "#";
+        guideBtn.className = "btn-guide active";
+        guideBtn.innerText = "❓ إذا واجهت أي مشكلة في التحميل اضغط هنا";
+        guideBtn.onclick = function () {
+          showPopup();
+          return false;
+        };
+        document.querySelector(".final-buttons").appendChild(guideBtn);
+      }
     }
   }
 
@@ -291,9 +349,26 @@
     window.open("https://shr2.link/L0wFO", "_blank");
   }
 
-  function showVideo() {
-    document.getElementById("videoContainer").style.display = "block";
-    document.getElementById("guideVideo").scrollIntoView({ behavior: "smooth" });
+  function showPopup() {
+    const iframe = document.getElementById("youtubeFrame");
+    const message = document.getElementById("popupMessage");
+    document.getElementById("popupOverlay").style.display = "flex";
+    iframe.style.display = "none";
+    message.style.display = "block";
+
+    setTimeout(() => {
+      iframe.src = "https://www.youtube.com/embed/Bl3ysLPZlI0?autoplay=1&vq=large&rel=0";
+      iframe.style.display = "block";
+      message.style.display = "none";
+    }, 2000);
+  }
+
+  function closePopup() {
+    const overlay = document.getElementById("popupOverlay");
+    const iframe = document.getElementById("youtubeFrame");
+    document.getElementById("popupMessage").style.display = "none";
+    overlay.style.display = "none";
+    iframe.src = "";
   }
 </script>
 
