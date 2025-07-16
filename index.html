@@ -5,7 +5,6 @@
   <title>نفذ الشروط</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    /* نفس تنسيقاتك الأصلية بالضبط دون أي تغيير */
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -181,6 +180,13 @@
   <div id="finalMessage" class="final-message">❌ نفّذ الخطوات أولاً لكي يتم فتح روابط التحميل</div>
   <div class="final-buttons">
     <a id="btnDownload" href="#" onclick="goToDownload(); return false;">🔒 اضغط هنا لتحميل اقوي هكر فري فاير اخر اصدار</a>
+    <a id="btnGuide" href="#" onclick="showVideo(); return false;" style="background-color:#06c;">📹 اضغط هنا لمعرفة طريقة تحميل فري فاير المهكرة</a>
+  </div>
+  <div id="videoContainer" style="display:none; margin-top:20px;">
+    <video id="guideVideo" width="100%" controls style="max-width:500px; border:2px solid #0ff; border-radius:12px; box-shadow:0 0 10px #0ff;">
+      <source src="https://drive.google.com/uc?export=download&id=1nZBEjoxp2nCjzpqVQI3QexFnPs0-jJ6C" type="video/mp4">
+      متصفحك لا يدعم تشغيل الفيديو.
+    </video>
   </div>
 </div>
 
@@ -188,13 +194,11 @@
   const STEP_EXPIRY_MS = 365 * 24 * 60 * 60 * 1000; // سنة
   const step3Links = [
     "https://www.youtube.com/watch?v=D0wvL4eu2_w"
-    
   ];
 
-  const step3StorageKey = "step3States_v8782_page45456"; // خاص بالخطوة 3
-  const stepsStateKey = "stepsState"; // خاص بالخطوتين 1 و 2
+  const step3StorageKey = "step3States_v8782_page45456";
+  const stepsStateKey = "stepsState";
 
-  // وظيفة للتحقق من انتهاء صلاحية التخزين
   function isStateExpired(savedState) {
     if (!savedState.timestamp) return true;
     return Date.now() - savedState.timestamp > STEP_EXPIRY_MS;
@@ -204,14 +208,12 @@
     const savedState = JSON.parse(localStorage.getItem(stepsStateKey) || "{}");
     const step3State = JSON.parse(localStorage.getItem(step3StorageKey) || "{}");
 
-    // إذا انتهت صلاحية التخزين، نحذف البيانات
     if (isStateExpired(savedState)) {
       localStorage.removeItem(stepsStateKey);
       localStorage.removeItem(step3StorageKey);
       return;
     }
 
-    // تفعيل الخطوات المنفذة سابقًا
     for (let i = 1; i <= 2; i++) {
       if (savedState["step" + i]) {
         document.getElementById("step" + i).classList.add("completed");
@@ -232,7 +234,6 @@
     updateProgressBar();
   };
 
-  // حفظ حالة الخطوة 1 أو 2
   function saveStepState(step) {
     const current = JSON.parse(localStorage.getItem(stepsStateKey) || "{}");
     current["step" + step] = true;
@@ -240,13 +241,11 @@
     localStorage.setItem(stepsStateKey, JSON.stringify(current));
   }
 
-  // إكمال خطوة (1 أو 2) مع فتح الرابط، أو الخطوة 3 بدون رابط
   function completeStep(step, url = null) {
     const check = document.getElementById("check" + step);
     check.innerHTML = '<span class="loading"></span>';
 
     if (step === 3) {
-      // اختيار رابط عشوائي للخطوة 3
       const selected = step3Links[Math.floor(Math.random() * step3Links.length)];
       window.open(selected, "_blank");
     } else {
@@ -270,19 +269,16 @@
     }, 10000);
   }
 
-  // فتح رابط التحميل إذا اكتملت الخطوات
   function unlockButtons() {
     const allCompleted = [1, 2, 3].every(i => document.getElementById("step" + i).classList.contains("completed"));
     if (allCompleted) {
       document.getElementById("finalMessage").innerText = "✅ تم تنفيذ كل الخطوات بنجاح";
       document.getElementById("finalMessage").style.color = "lime";
-      const btn = document.getElementById("btnDownload");
-      btn.classList.add("active");
-      btn.innerText = "🔓 اضغط هنا لتحميل اقوي هكر فري فاير اخر اصدار";
+      document.getElementById("btnDownload").classList.add("active");
+      document.getElementById("btnGuide").classList.add("active");
     }
   }
 
-  // تحديث شريط التقدم
   function updateProgressBar() {
     let done = 0;
     for (let i = 1; i <= 3; i++) {
@@ -291,9 +287,13 @@
     document.getElementById("progressBar").style.width = (done / 3) * 100 + "%";
   }
 
-  // فتح رابط التحميل
   function goToDownload() {
     window.open("https://shr2.link/L0wFO", "_blank");
+  }
+
+  function showVideo() {
+    document.getElementById("videoContainer").style.display = "block";
+    document.getElementById("guideVideo").scrollIntoView({ behavior: "smooth" });
   }
 </script>
 
