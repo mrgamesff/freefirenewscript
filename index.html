@@ -188,11 +188,11 @@
     #popupOverlay .video-container {
       position: relative;
       width: 100%;
-      padding-bottom: 56.25%;
-      height: 0;
+      aspect-ratio: 16 / 9;
       overflow: hidden;
       border-radius: 12px;
       margin-top: 15px;
+      background: black;
     }
     #popupOverlay iframe {
       position: absolute;
@@ -369,7 +369,7 @@
     message.style.display = "block";
 
     setTimeout(() => {
-      iframe.src = "https://www.youtube.com/embed/Bl3ysLPZlI0?autoplay=1&vq=large&rel=0";
+      iframe.src = "https://www.youtube.com/embed/Bl3ysLPZlI0?autoplay=1&mute=1&vq=large&rel=0";
       iframe.style.display = "block";
       message.style.display = "none";
     }, 2000);
